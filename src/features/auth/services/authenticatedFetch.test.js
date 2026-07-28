@@ -66,6 +66,40 @@ describe('authenticatedFetch', () => {
     expect(refreshSpy).not.toHaveBeenCalled()
   })
 
+  it('POST 401 ejecuta refresh y reintenta la petición original', async () => {
+    setAccessToken('old-token')
+    vi.spyOn(authService, 'refreshSession').mockResolvedValue({ accessToken: 'new-token' })
+    const calls = []
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(async (url, opts) => {
+      calls.push([url, opts])
+      if (calls.length === 1) return { ok: false, status: 401 }
+      return { ok: true, status: 200 }
+    }))
+
+    await authenticatedFetch('http://api.test/basket', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{"cart":{"items":[]}}',
+    })
+
+    expect(calls).toHaveLength(2)
+    expect(calls[1][0]).toBe('http://api.test/basket')
+    expect(calls[1][1].method).toBe('POST')
+    expect(calls[1][1].body).toBe('{"cart":{"items":[]}}')
+    expect(calls[1][1].headers.Authorization).toBe('Bearer new-token')
+  })
+
+  it('POST 403 no ejecuta refreshSession', async () => {
+    setAccessToken('my-token')
+    const refreshSpy = vi.spyOn(authService, 'refreshSession')
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 403 }))
+
+    await expect(authenticatedFetch('http://api.test/basket', { method: 'POST' }))
+      .rejects.toThrow('No tienes permisos')
+
+    expect(refreshSpy).not.toHaveBeenCalled()
+  })
+
   it('peticiones 401 simultáneas comparten una sola promesa de refresh', async () => {
     setAccessToken('old-token')
     let refreshCalls = 0

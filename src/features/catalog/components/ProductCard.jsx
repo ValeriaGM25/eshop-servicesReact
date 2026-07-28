@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../auth/hooks/useAuth.js'
 import { useBasket } from '../../basket/hooks/useBasket.js'
@@ -12,28 +13,32 @@ function getCategories(category) {
 
 export default function ProductCard({ product }) {
   const { isAuthenticated, isAdmin, isCliente } = useAuth()
-  const { addProduct, loading, operationLoading } = useBasket()
+  const { addProduct, error, loading, operationLoading } = useBasket()
   const navigate = useNavigate()
   const categories = getCategories(product.category)
   const price = Number(product.price)
+  const [addedMessage, setAddedMessage] = useState('')
 
-  function handleAddToCart() {
+  async function handleAddToCart() {
+    setAddedMessage('')
     if (!isAuthenticated) {
       savePendingPurchase({ type: 'add-to-cart', productId: product.id, returnTo: '/productos/' + product.id })
       navigate('/login', { state: { from: { pathname: '/productos/' + product.id } } })
       return
     }
-    addProduct(product)
+    const added = await addProduct(product)
+    if (added) setAddedMessage('Producto agregado al carrito.')
   }
 
-  function handleBuyNow() {
+  async function handleBuyNow() {
+    setAddedMessage('')
     if (!isAuthenticated) {
       savePendingPurchase({ type: 'buy-now', productId: product.id })
       navigate('/login', { state: { from: { pathname: '/productos/' + product.id } } })
       return
     }
-    addProduct(product)
-    navigate('/carrito')
+    const added = await addProduct(product)
+    if (added) navigate('/carrito')
   }
 
   return (
@@ -73,7 +78,7 @@ export default function ProductCard({ product }) {
             </>
           ) : (
             <>
-              <button className="btn btn-primary" type="button" disabled={loading || operationLoading} onClick={handleAddToCart} aria-label={`Agregar ${product.name} al carrito`}>
+              <button className="btn btn-primary" type="button" disabled={loading || operationLoading} aria-disabled={loading || operationLoading} onClick={handleAddToCart} aria-label={`Agregar ${product.name} al carrito`}>
                 {operationLoading ? (
                   <><span className="spinner-border spinner-border-sm me-2" />Agregando...</>
                 ) : (
@@ -81,10 +86,16 @@ export default function ProductCard({ product }) {
                 )}
               </button>
               {isCliente && (
-                <button className="btn btn-success" type="button" disabled={loading || operationLoading} onClick={handleBuyNow} aria-label={`Comprar ${product.name} ahora`}>
-                  <i className="bi bi-lightning me-2" />Comprar ahora
+                <button className="btn btn-success" type="button" disabled={loading || operationLoading} aria-disabled={loading || operationLoading} onClick={handleBuyNow} aria-label={`Comprar ${product.name} ahora`}>
+                  {operationLoading ? (
+                    <><span className="spinner-border spinner-border-sm me-2" />Procesando...</>
+                  ) : (
+                    <><i className="bi bi-lightning me-2" />Comprar ahora</>
+                  )}
                 </button>
               )}
+              {addedMessage && <div className="alert alert-success py-2 mb-0" role="status">{addedMessage}</div>}
+              {error && <div className="alert alert-danger py-2 mb-0" role="alert">{error}</div>}
             </>
           )}
         </div>

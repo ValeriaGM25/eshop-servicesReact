@@ -1,13 +1,30 @@
 import { render, screen, act, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { AuthContext } from '../../auth/context/AuthContext.jsx'
 import { BasketProvider } from './BasketProvider.jsx'
 import { useBasket } from '../hooks/useBasket.js'
 
+const BASKET_URL = `${import.meta.env.VITE_BASKET_API_URL}/basket`
+
 function BasketConsumer() {
   const { loading, totalItems, items } = useBasket()
   if (loading) return <span>Cargando</span>
   return <span>Total {totalItems} items</span>
+}
+
+const product = { id: 'p1', name: 'Test', price: 10 }
+
+function BasketOperationConsumer() {
+  const { addProduct, error, operationLoading, totalItems } = useBasket()
+  return (
+    <>
+      <span>Total {totalItems} items</span>
+      <span>{operationLoading ? 'Operacion cargando' : 'Operacion lista'}</span>
+      {error ? <span role="alert">{error}</span> : null}
+      <button type="button" disabled={operationLoading} onClick={() => addProduct(product)}>Agregar</button>
+    </>
+  )
 }
 
 function renderBasket(authValue) {
@@ -138,5 +155,88 @@ describe('BasketProvider', () => {
     await waitFor(() => {
       expect(screen.getByText('Rendered')).toBeInTheDocument()
     })
+  })
+
+  it('POST 200 actualiza items y totalItems', async () => {
+    const user = userEvent.setup()
+    const fetchSpy = vi.fn().mockImplementation(async (url, opts) => {
+      if (opts?.method === 'POST') {
+        return { ok: true, status: 200, text: async () => '{"cart":{"items":[{"productId":"p1","productName":"Test","price":10,"quantity":1,"color":"Sin especificar"}],"totalPrice":10}}' }
+      }
+      return { ok: true, status: 200, text: async () => '{"cart":{"items":[],"totalPrice":0}}' }
+    })
+    vi.stubGlobal('fetch', fetchSpy)
+
+    render(
+      <AuthContext.Provider value={{ isAuthenticated: true, isCliente: true, user: { name: 'Client', roles: ['Cliente'] } }}>
+        <BasketProvider>
+          <BasketOperationConsumer />
+        </BasketProvider>
+      </AuthContext.Provider>,
+    )
+
+    await waitFor(() => expect(screen.getByText('Total 0 items')).toBeInTheDocument())
+    await user.click(screen.getByRole('button', { name: 'Agregar' }))
+
+    await waitFor(() => expect(screen.getByText('Total 1 items')).toBeInTheDocument())
+    const postCall = fetchSpy.mock.calls.find(([, opts]) => opts?.method === 'POST')
+    expect(postCall[0]).toBe(BASKET_URL)
+    expect(JSON.parse(postCall[1].body)).toEqual({
+      cart: {
+        items: [{ productId: 'p1', productName: 'Test', price: 10, quantity: 1, color: 'Sin especificar' }],
+      },
+    })
+  })
+
+  it('POST 400 muestra error y operationLoading vuelve a false', async () => {
+    const user = userEvent.setup()
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(async (url, opts) => {
+      if (opts?.method === 'POST') {
+        return { ok: false, status: 400, text: async () => '{"title":"Bad Request"}' }
+      }
+      return { ok: true, status: 200, text: async () => '{"cart":{"items":[],"totalPrice":0}}' }
+    }))
+
+    render(
+      <AuthContext.Provider value={{ isAuthenticated: true, isCliente: true, user: { name: 'Client', roles: ['Cliente'] } }}>
+        <BasketProvider>
+          <BasketOperationConsumer />
+        </BasketProvider>
+      </AuthContext.Provider>,
+    )
+
+    await waitFor(() => expect(screen.getByText('Total 0 items')).toBeInTheDocument())
+    await user.click(screen.getByRole('button', { name: 'Agregar' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('No fue posible guardar el carrito porque los datos enviados no son válidos.')
+    expect(screen.getByText('Operacion lista')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Agregar' })).not.toBeDisabled()
+  })
+
+  it('doble clic no duplica la petición POST', async () => {
+    const user = userEvent.setup()
+    const fetchSpy = vi.fn().mockImplementation(async (url, opts) => {
+      if (opts?.method === 'POST') {
+        await new Promise((resolve) => setTimeout(resolve, 20))
+        return { ok: true, status: 200, text: async () => '{"cart":{"items":[{"productId":"p1","productName":"Test","price":10,"quantity":1}],"totalPrice":10}}' }
+      }
+      return { ok: true, status: 200, text: async () => '{"cart":{"items":[],"totalPrice":0}}' }
+    })
+    vi.stubGlobal('fetch', fetchSpy)
+
+    render(
+      <AuthContext.Provider value={{ isAuthenticated: true, isCliente: true, user: { name: 'Client', roles: ['Cliente'] } }}>
+        <BasketProvider>
+          <BasketOperationConsumer />
+        </BasketProvider>
+      </AuthContext.Provider>,
+    )
+
+    await waitFor(() => expect(screen.getByText('Total 0 items')).toBeInTheDocument())
+    await user.dblClick(screen.getByRole('button', { name: 'Agregar' }))
+
+    await waitFor(() => expect(screen.getByText('Total 1 items')).toBeInTheDocument())
+    const postCalls = fetchSpy.mock.calls.filter(([, opts]) => opts?.method === 'POST')
+    expect(postCalls).toHaveLength(1)
   })
 })

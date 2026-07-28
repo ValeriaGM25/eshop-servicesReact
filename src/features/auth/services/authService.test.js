@@ -1,8 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { registerUser, loginUser, refreshSession } from './authService.js'
 
-const BASE = 'http://localhost:6003'
-
 describe('authService', () => {
   describe('registerUser', () => {
     it('no envía role, roles, isAdmin ni permissions en el body', async () => {
