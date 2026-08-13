@@ -61,8 +61,8 @@ export default function RegisterPage() {
   if (authLoading) return null
 
   return (
-    <AuthLayout>
-      <div className="card shadow-sm border-0 rounded-4">
+    <AuthLayout mode="register">
+      <div className="card shadow-lg border-0 rounded-4 neo-card">
         <div className="card-body p-4">
           <h2 className="card-title text-center mb-4">
             <i className="bi bi-person-plus me-2" />

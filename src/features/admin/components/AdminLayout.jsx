@@ -4,6 +4,7 @@ const navItems = [
   { path: '/admin', label: 'Resumen', icon: 'bi-speedometer2' },
   { path: '/admin/productos', label: 'Productos', icon: 'bi-box-seam' },
   { path: '/admin/productos/nuevo', label: 'Nuevo producto', icon: 'bi-plus-circle' },
+  { path: '/admin/ordenes', label: 'Órdenes', icon: 'bi-receipt-cutoff' },
 ]
 
 export default function AdminLayout() {
@@ -15,7 +16,7 @@ export default function AdminLayout() {
         <div>
           <h1 className="h3 mb-1">
             <i className="bi bi-shield-lock text-primary me-2" />
-            Administración
+            Command Center
           </h1>
           <p className="text-secondary small mb-0">Panel protegido por rol Admin</p>
         </div>

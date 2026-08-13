@@ -10,6 +10,10 @@ import AdminDashboardPage from '../features/admin/pages/AdminDashboardPage.jsx'
 import AdminProductsPage from '../features/admin/pages/AdminProductsPage.jsx'
 import CreateProductPage from '../features/admin/pages/CreateProductPage.jsx'
 import EditProductPage from '../features/admin/pages/EditProductPage.jsx'
+import OrderConfirmationPage from '../features/orders/pages/OrderConfirmationPage.jsx'
+import OrderDetailsPage from '../features/orders/pages/OrderDetailsPage.jsx'
+import MyOrdersPage from '../features/orders/pages/MyOrdersPage.jsx'
+import AdminOrdersPage from '../features/admin/pages/AdminOrdersPage.jsx'
 import Layout from '../shared/components/Layout.jsx'
 import AdminLayout from '../features/admin/components/AdminLayout.jsx'
 import ProtectedRoute from '../features/auth/components/ProtectedRoute.jsx'
@@ -29,11 +33,15 @@ export default function AppRoutes() {
         <Route path="/no-autorizado" element={<UnauthorizedPage />} />
         <Route path="/mi-cuenta" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
         <Route path="/carrito" element={<RoleRoute roles={['Cliente']}><BasketPage /></RoleRoute>} />
+        <Route path="/compra/confirmacion/:orderId" element={<RoleRoute roles={['Cliente']}><OrderConfirmationPage /></RoleRoute>} />
+        <Route path="/ordenes/:id" element={<RoleRoute roles={['Cliente']}><OrderDetailsPage /></RoleRoute>} />
+        <Route path="/mis-compras" element={<RoleRoute roles={['Cliente']}><MyOrdersPage /></RoleRoute>} />
         <Route path="/admin" element={<RoleRoute roles={['Admin']}><AdminLayout /></RoleRoute>}>
           <Route index element={<AdminDashboardPage />} />
           <Route path="productos" element={<AdminProductsPage />} />
           <Route path="productos/nuevo" element={<CreateProductPage />} />
           <Route path="productos/:id/editar" element={<EditProductPage />} />
+          <Route path="ordenes" element={<AdminOrdersPage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Route>

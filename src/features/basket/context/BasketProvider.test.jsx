@@ -8,9 +8,16 @@ import { useBasket } from '../hooks/useBasket.js'
 const BASKET_URL = `${import.meta.env.VITE_BASKET_API_URL}/basket`
 
 function BasketConsumer() {
-  const { loading, totalItems, items } = useBasket()
+  const { loading, totalItems, items, totalPrice, error } = useBasket()
   if (loading) return <span>Cargando</span>
-  return <span>Total {totalItems} items</span>
+  return (
+    <>
+      <span>Total {totalItems} items</span>
+      <span>Items length {items.length}</span>
+      <span>Total price {totalPrice}</span>
+      {error ? <span role="alert">{error}</span> : null}
+    </>
+  )
 }
 
 const product = { id: 'p1', name: 'Test', price: 10 }
@@ -52,6 +59,9 @@ describe('BasketProvider', () => {
     renderBasket({ user: null })
 
     expect(await screen.findByText('Total 0 items')).toBeInTheDocument()
+    expect(screen.getByText('Items length 0')).toBeInTheDocument()
+    expect(screen.getByText('Total price 0')).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
   it('no consulta Basket para visitante', async () => {

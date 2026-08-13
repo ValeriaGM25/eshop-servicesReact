@@ -8,11 +8,13 @@ export default function Navbar() {
   const { totalItems } = useBasket()
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm" aria-label="Navegacion principal">
+    <nav className="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm neo-navbar" aria-label="Navegacion principal">
       <div className="container">
         <NavLink className="navbar-brand fw-bold d-flex align-items-center gap-2" to="/" aria-label="Ir al inicio">
-          <i className="bi bi-shop" aria-hidden="true" />
-          E-Shop Microservices
+          <span className="neo-brand-mark" style={{ width: '2.35rem', height: '2.35rem', borderRadius: '.85rem' }}>
+            <i className="bi bi-cpu" aria-hidden="true" />
+          </span>
+          eShop Neo
         </NavLink>
 
         <button
@@ -31,32 +33,41 @@ export default function Navbar() {
           <ul className="navbar-nav ms-auto align-items-lg-center gap-lg-2">
 
             <li className="nav-item">
-              <NavLink className={({ isActive }) => `nav-link rounded-pill px-3 ${isActive ? 'active nav-link-active' : ''}`} to="/" end>
-                <i className="bi bi-house me-1" />Inicio
-              </NavLink>
-            </li>
-
-            <li className="nav-item">
               <NavLink className={({ isActive }) => `nav-link rounded-pill px-3 ${isActive ? 'active nav-link-active' : ''}`} to="/productos">
                 <i className="bi bi-grid me-1" />Catálogo
               </NavLink>
             </li>
 
             {isAdmin && (
-              <li className="nav-item">
-                <NavLink className={({ isActive }) => `nav-link rounded-pill px-3 ${isActive ? 'active nav-link-active' : ''}`} to="/admin">
-                  <i className="bi bi-shield-lock me-1" />Administración
-                </NavLink>
-              </li>
+              <>
+                <li className="nav-item">
+                  <NavLink className={({ isActive }) => `nav-link rounded-pill px-3 ${isActive ? 'active nav-link-active' : ''}`} to="/admin/productos">
+                    <i className="bi bi-box-seam me-1" />Productos
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className={({ isActive }) => `nav-link rounded-pill px-3 ${isActive ? 'active nav-link-active' : ''}`} to="/admin/ordenes">
+                    <i className="bi bi-receipt-cutoff me-1" />Órdenes
+                  </NavLink>
+                </li>
+                <li className="nav-item"><span className="badge rounded-pill text-bg-warning text-dark">Admin</span></li>
+              </>
             )}
 
             {isCliente && (
-              <li className="nav-item">
-                <NavLink className={({ isActive }) => `nav-link rounded-pill px-3 ${isActive ? 'active nav-link-active' : ''}`} to="/carrito">
-                  <i className="bi bi-cart3 me-1" />Carrito
-                  <span className="badge rounded-pill bg-danger ms-2">{totalItems}</span>
-                </NavLink>
-              </li>
+              <>
+                <li className="nav-item">
+                  <NavLink className={({ isActive }) => `nav-link rounded-pill px-3 ${isActive ? 'active nav-link-active' : ''}`} to="/carrito">
+                    <i className="bi bi-cart3 me-1" />Mi carrito
+                    <span className="badge rounded-pill bg-danger ms-2">{totalItems}</span>
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className={({ isActive }) => `nav-link rounded-pill px-3 ${isActive ? 'active nav-link-active' : ''}`} to="/mis-compras">
+                    <i className="bi bi-bag-check me-1" />Mis compras
+                  </NavLink>
+                </li>
+              </>
             )}
 
             {isAuthenticated ? (

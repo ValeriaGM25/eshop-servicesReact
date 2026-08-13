@@ -28,6 +28,42 @@ describe('basketService URLs', () => {
     expect(url).not.toMatch(/\/basket\/\w+/)
   })
 
+  it('getBasket devuelve cart cuando GET /basket responde 200', async () => {
+    authFetch.authenticatedFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: async () => '{"cart":{"items":[{"productId":"p1","quantity":2,"price":10}],"totalPrice":20}}',
+    })
+
+    await expect(getBasket()).resolves.toEqual({
+      items: [{ productId: 'p1', quantity: 2, price: 10 }],
+      totalPrice: 20,
+    })
+  })
+
+  it('getBasket trata GET /basket 404 como carrito vacio', async () => {
+    authFetch.authenticatedFetch.mockResolvedValue({
+      ok: false,
+      status: 404,
+      text: async () => '',
+    })
+
+    await expect(getBasket()).resolves.toEqual({
+      items: [],
+      totalPrice: 0,
+    })
+  })
+
+  it('getBasket mantiene GET /basket 500 como error', async () => {
+    authFetch.authenticatedFetch.mockResolvedValue({
+      ok: false,
+      status: 500,
+      text: async () => '{"title":"Internal Server Error"}',
+    })
+
+    await expect(getBasket()).rejects.toThrow('No fue posible guardar el carrito. Intenta nuevamente.')
+  })
+
   it('deleteBasket usa /basket (sin userName)', async () => {
     authFetch.authenticatedFetch.mockResolvedValue({
       ok: true,

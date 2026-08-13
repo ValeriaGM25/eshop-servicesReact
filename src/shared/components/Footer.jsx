@@ -2,15 +2,14 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="footer bg-dark text-light py-4 mt-auto">
+    <footer className="footer text-light py-4 mt-auto" style={{ background: 'rgba(8, 13, 28, 0.92)' }}>
       <div className="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
         <div>
           <p className="fw-bold mb-1">
             <i className="bi bi-shop me-2" aria-hidden="true" />
-            E-Shop Microservices
+            eShop Neo Commerce
           </p>
-          <p className="text-white-50 small mb-0">React conectado con microservicios .NET.</p>
-          <p className="text-white-50 small mb-0">Imágenes proporcionadas por Unsplash.</p>
+          <p className="text-white-50 small mb-0">Tienda digital conectada con Catalog, Basket, Identity y Orders API.</p>
         </div>
         <div className="d-flex align-items-center gap-3 text-white-50 small">
           <span>

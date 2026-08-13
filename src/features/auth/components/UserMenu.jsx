@@ -4,11 +4,11 @@ export default function UserMenu({ user, onLogout, logoutLoading }) {
   return (
     <li className="nav-item dropdown">
       <button
-        className="nav-link dropdown-toggle btn btn-link text-white text-decoration-none d-flex align-items-center gap-1"
+        className="nav-link dropdown-toggle btn btn-link text-white text-decoration-none d-flex align-items-center gap-2"
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        <i className="bi bi-person-circle" aria-hidden="true" />
+        <i className="bi bi-person-circle text-info" aria-hidden="true" />
         {user?.fullName ?? user?.name ?? 'Usuario'}
       </button>
       <ul className="dropdown-menu dropdown-menu-end shadow-sm">

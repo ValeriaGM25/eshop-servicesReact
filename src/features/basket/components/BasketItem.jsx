@@ -8,7 +8,7 @@ export default function BasketItem({ item }) {
   const subtotal = price * quantity
 
   return (
-    <article className="card border-0 shadow-sm mb-3 basket-item-card rounded-4">
+    <article className="card border-0 shadow-sm mb-3 basket-item-card rounded-4 neo-card">
       <div className="card-body p-4">
         <div className="row g-3 align-items-center">
           <div className="col-auto">

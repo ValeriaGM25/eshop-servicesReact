@@ -68,8 +68,8 @@ export default function LoginPage() {
   if (authLoading) return null
 
   return (
-    <AuthLayout>
-      <div className="card shadow-sm border-0 rounded-4">
+    <AuthLayout mode="login">
+      <div className="card shadow-lg border-0 rounded-4 neo-card">
         <div className="card-body p-4">
           {successMessage && (
             <div className="alert alert-success d-flex align-items-center gap-2" role="alert">
@@ -79,7 +79,7 @@ export default function LoginPage() {
           )}
           <h2 className="card-title text-center mb-4">
             <i className="bi bi-box-arrow-in-right me-2" />
-            Iniciar Sesión
+            Iniciar sesión
           </h2>
           {error && (
             <div className="alert alert-danger d-flex align-items-center gap-2" role="alert">

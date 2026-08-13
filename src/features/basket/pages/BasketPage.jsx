@@ -12,11 +12,11 @@ export default function BasketPage() {
     <section className="container py-5">
       <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
         <div>
-          <span className="badge text-bg-primary rounded-pill mb-3">
+          <span className="badge text-bg-light border rounded-pill mb-3">
             <i className="bi bi-cart3 me-1" aria-hidden="true" />
             Basket.API
           </span>
-          <h1 className="display-5 fw-bold mb-0">Mi carrito</h1>
+          <h1 className="display-5 fw-bold mb-0">Carrito de compra</h1>
         </div>
         <span className="badge rounded-pill text-bg-light border text-primary fs-6 px-3 py-2">
           {totalItems} artículos
@@ -27,7 +27,7 @@ export default function BasketPage() {
       {error ? <ErrorMessage message={error} /> : null}
 
       {!loading && items.length === 0 ? (
-        <div className="empty-state text-center bg-white rounded-4 shadow-sm p-5">
+        <div className="empty-state text-center neo-card rounded-4 shadow-sm p-5">
           <i className="bi bi-cart-x display-1 text-primary" aria-hidden="true" />
           <h2 className="h3 fw-bold mt-3">Tu carrito está vacío.</h2>
           <p className="text-secondary mb-4">Explora el catálogo y agrega productos para comenzar.</p>

@@ -2,6 +2,8 @@ import { authenticatedFetch } from '../../auth/services/authenticatedFetch.js'
 
 const basketApiUrl = import.meta.env.VITE_BASKET_API_URL
 
+const EMPTY_BASKET = { items: [], totalPrice: 0 }
+
 function getUrl(path = '') {
   if (!basketApiUrl) throw new Error('VITE_BASKET_API_URL no esta configurada.')
   return `${basketApiUrl}${path}`
@@ -38,7 +40,7 @@ export async function getBasket() {
     throw normalizeRequestError(error)
   }
 
-  if (response.status === 404) return null
+  if (response.status === 404) return EMPTY_BASKET
 
   const data = await readJson(response)
   if (!response.ok) {

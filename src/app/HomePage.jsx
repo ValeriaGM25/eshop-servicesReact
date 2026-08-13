@@ -1,45 +1,48 @@
 import { Link } from 'react-router-dom'
+import AuroraBackground from '../components/react-bits/AuroraBackground.jsx'
+import SpotlightCard from '../components/react-bits/SpotlightCard.jsx'
 import RemoteImage from '../shared/components/RemoteImage.jsx'
 import { heroRemoteImage } from '../shared/config/remoteImages.js'
 
 const benefits = [
   {
     icon: 'bi-grid-fill',
-    title: 'Catálogo de productos',
-    text: 'Explora artículos tecnológicos con precios, categorías y detalles actualizados.',
+    title: 'Selección inteligente',
+    text: 'Productos listos para crear, trabajar y disfrutar con mejor ritmo.',
   },
   {
     icon: 'bi-bag-check-fill',
-    title: 'Carrito persistente',
-    text: 'Agrega productos y conserva tu carrito usando Basket.API.',
+    title: 'Compra sin fricción',
+    text: 'Carrito persistente, checkout protegido y órdenes verificables.',
   },
   {
     icon: 'bi-hdd-network-fill',
-    title: 'Microservicios y Docker',
-    text: 'Frontend React integrado con servicios .NET listos para entornos modernos.',
+    title: 'Comprobantes reales',
+    text: 'Descarga tickets PDF generados por Orders.API, no por React.',
   },
 ]
 
 export default function HomePage() {
   return (
     <>
-      <section className="hero-section text-white">
-        <div className="container py-5">
+      <section className="hero-section text-white container py-4 py-lg-5">
+        <AuroraBackground className="neo-card shadow-lg">
+          <div className="container py-5">
           <div className="row align-items-center g-5 py-lg-5">
             <div className="col-lg-7">
-              <span className="badge rounded-pill text-bg-light text-primary mb-3">Frontend React independiente</span>
-              <h1 className="display-4 fw-bold lh-1 mb-4">Explora nuestro catálogo tecnológico</h1>
+              <span className="badge rounded-pill text-bg-light border mb-3">Digital Store</span>
+              <h1 className="display-3 fw-bold lh-1 mb-4">Tecnología que acompaña tu ritmo.</h1>
               <p className="lead mb-4 text-white-75">
-                Consulta productos, revisa sus detalles y administra tu carrito conectado con microservicios .NET.
+                Descubre productos para crear, trabajar y disfrutar mejor en una tienda conectada con APIs reales.
               </p>
               <div className="d-flex flex-column flex-sm-row gap-3">
-                <Link className="btn btn-light btn-lg px-4 fw-semibold" to="/productos">
+                <Link className="btn btn-primary btn-lg px-4 fw-semibold" to="/productos">
                   <i className="bi bi-grid-fill me-2" aria-hidden="true" />
-                  Ver catálogo
+                  Explorar productos
                 </Link>
-                <Link className="btn btn-outline-light btn-lg px-4 fw-semibold" to="/carrito">
+                <Link className="btn btn-outline-primary btn-lg px-4 fw-semibold" to="/login">
                   <i className="bi bi-cart3 me-2" aria-hidden="true" />
-                  Ver carrito
+                  Iniciar compra
                 </Link>
               </div>
             </div>
@@ -56,13 +59,14 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+        </AuroraBackground>
       </section>
 
       <section className="container py-5">
         <div className="row g-4">
           {benefits.map((benefit) => (
             <div className="col-md-4" key={benefit.title}>
-              <article className="card h-100 border-0 shadow-sm rounded-4 benefit-card">
+              <SpotlightCard as="article" className="card h-100 border-0 shadow-sm rounded-4 benefit-card">
                 <div className="card-body p-4">
                   <div className="feature-icon mb-3">
                     <i className={`bi ${benefit.icon}`} aria-hidden="true" />
@@ -70,7 +74,7 @@ export default function HomePage() {
                   <h2 className="h5 fw-bold">{benefit.title}</h2>
                   <p className="text-secondary mb-0">{benefit.text}</p>
                 </div>
-              </article>
+              </SpotlightCard>
             </div>
           ))}
         </div>

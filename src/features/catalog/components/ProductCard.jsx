@@ -6,6 +6,7 @@ import RemoteImage from '../../../shared/components/RemoteImage.jsx'
 import { getProductImage } from '../../../shared/config/remoteImages.js'
 import { mxnFormatter } from '../../../shared/utils/formatters.js'
 import { savePendingPurchase } from '../../auth/utils/pendingPurchase.js'
+import SpotlightCard from '../../../components/react-bits/SpotlightCard.jsx'
 
 function getCategories(category) {
   return Array.isArray(category) ? category : [category].filter(Boolean)
@@ -42,7 +43,7 @@ export default function ProductCard({ product }) {
   }
 
   return (
-    <article className="card h-100 border-0 shadow-sm product-card rounded-4 overflow-hidden">
+    <SpotlightCard as="article" className="card h-100 border-0 shadow-sm product-card rounded-4 overflow-hidden">
       <div className="product-image-wrapper bg-light">
         <RemoteImage
           src={getProductImage(product)}
@@ -58,8 +59,9 @@ export default function ProductCard({ product }) {
             ))}
           </div>
         ) : null}
-        <h2 className="h5 fw-bold text-dark">{product.name ?? 'Producto sin nombre disponible'}</h2>
+        <h2 className="h5 fw-bold">{product.name ?? 'Producto sin nombre disponible'}</h2>
         {product.description ? <p className="product-description text-secondary flex-grow-1">{product.description}</p> : null}
+        <p className="small text-secondary mb-2"><i className="bi bi-check-circle text-success me-1" />Disponible</p>
         {Number.isFinite(price) ? <p className="fs-4 fw-bold text-primary mb-0">{mxnFormatter.format(price)}</p> : null}
       </div>
       <div className="card-footer bg-transparent border-0 p-4 pt-0 mt-auto">
@@ -100,6 +102,6 @@ export default function ProductCard({ product }) {
           )}
         </div>
       </div>
-    </article>
+    </SpotlightCard>
   )
 }
